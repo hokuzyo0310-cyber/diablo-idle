@@ -1,0 +1,15 @@
+# Godot
+.godot/
+*.import
+*.translation
+
+# User data
+user://
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
