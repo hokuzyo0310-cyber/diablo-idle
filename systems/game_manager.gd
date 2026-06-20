@@ -2,6 +2,11 @@
 # 持有所有运行时游戏状态，通过 1Hz Timer 驱动自动战斗
 extends Node
 
+# 导入数据预设
+var EnemyPresets = preload("res://data/enemy_presets.gd")
+var StagePresets = preload("res://data/stage_presets.gd")
+var CharacterPresets = preload("res://data/character_presets.gd")
+
 # ============================================================
 # 配置常量
 # ============================================================
@@ -101,8 +106,141 @@ func _on_tick() -> void:
     _update_stats()
 
 func _process_combat_tick() -> void:
-    # TODO: 战斗逻辑实现（见 combat_resolver.gd）
-    pass
+    if current_enemy_data.is_empty():
+        _initialize_current_stage()
+        if enemies_in_stage.is_empty():
+            return
+
+    # 玩家造成伤害
+    if current_health <= 0:
+        _handle_player_death()
+        return
+
+    var player_damage = CombatResolver.calculate_player_damage()
+    if current_enemy_data.is_empty():
+        _initialize_current_enemy()
+        if current_enemy_data.is_empty():
+            return
+
+    current_enemy_data.current_health -= player_damage
+    EventBus.damage_dealt_to_enemy.emit(player_damage, current_enemy_data.get("display_name", "敌人"))
+
+    # 敌人反击
+    if current_enemy_data.current_health > 0:
+        var enemy_damage = CombatResolver.calculate_enemy_damage(current_enemy_data)
+        var defense = CombatResolver.calculate_player_defense()
+        var reduction = CombatResolver.calculate_damage_reduction(defense)
+        var reduced_damage = enemy_damage * (1.0 - reduction)
+        current_health -= reduced_damage
+        EventBus.enemy_damaged_player.emit(reduced_damage)
+
+        if current_health <= 0:
+            _handle_player_death()
+    else:
+        _handle_enemy_defeat()
+
+func _handle_enemy_defeat() -> void:
+    # 发放奖励
+    var xp = CombatResolver.calculate_experience_reward(current_enemy_data)
+    var gold = CombatResolver.calculate_gold_reward(current_enemy_data)
+    add_experience(xp)
+    add_gold(gold)
+    total_kills += 1
+
+    # 生成掉落物
+    var item = LootManager.generate_item(current_stage, 0.0)
+    if not item.is_empty():
+        inventory.append(item)
+
+    EventBus.enemy_killed.emit(current_enemy_data.get("display_name", "敌人"), current_stage)
+
+    # 推进到下一只敌人
+    enemy_index += 1
+    if enemy_index >= enemies_in_stage.size():
+        _advance_stage()
+    else:
+        _initialize_current_enemy()
+
+func _initialize_current_stage() -> void:
+    var stage_data = StagePresets.get_stage(current_stage)
+    if stage_data.is_empty():
+        return
+
+    enemies_in_stage.clear()
+    enemy_index = 0
+
+    # 生成普通敌人
+    var enemy_count = randi_range(stage_data.enemy_count_min, stage_data.enemy_count_max)
+    for i in range(enemy_count):
+        var enemy_template_id = stage_data.enemy_templates[randi() % stage_data.enemy_templates.size()]
+        var enemy_template = EnemyPresets.get_enemy_template(enemy_template_id)
+        var enemy = _create_enemy_from_template(enemy_template, stage_data.area_level)
+        enemies_in_stage.append(enemy)
+
+    # Boss 战处理
+    if stage_data.get("is_boss", false) and not stage_data.boss_template.is_empty():
+        var boss_template = EnemyPresets.get_enemy_template(stage_data.boss_template)
+        var boss = _create_enemy_from_template(boss_template, stage_data.area_level)
+        boss.is_boss = true
+        enemies_in_stage.append(boss)
+        EventBus.boss_spawned.emit(boss.get("display_name", "Boss"))
+
+    _initialize_current_enemy()
+
+func _create_enemy_from_template(template: Dictionary, area_level: int) -> Dictionary:
+    var scaling = pow(1.12, area_level - 1)
+    var difficulty_mult = match(difficulty):
+        "普通": 1.0
+        "噩梦": 2.0
+        "地狱": 4.0
+        _: 1.0
+
+    return {
+        "enemy_id": template.get("enemy_id", ""),
+        "display_name": template.get("display_name", "敌人"),
+        "is_boss": template.get("is_boss", false),
+        "max_health": template.get("base_health", 10) * scaling * difficulty_mult,
+        "current_health": template.get("base_health", 10) * scaling * difficulty_mult,
+        "damage": template.get("base_damage", 1) * scaling * difficulty_mult,
+        "defense": template.get("base_defense", 0) * scaling,
+        "xp_multiplier": template.get("xp_multiplier", 1.0),
+        "gold_multiplier": template.get("gold_multiplier", 1.0),
+        "area_level": area_level,
+    }
+
+func _initialize_current_enemy() -> void:
+    if enemy_index < enemies_in_stage.size():
+        current_enemy_data = enemies_in_stage[enemy_index]
+    else:
+        current_enemy_data = {}
+
+func _advance_stage() -> void:
+    EventBus.stage_cleared.emit(current_stage)
+
+    # 检查是否是 Boss 阶段
+    var stage_data = StagePresets.get_stage(current_stage)
+    if stage_data.get("is_boss", false):
+        var boss_template = EnemyPresets.get_enemy_template(stage_data.boss_template)
+        EventBus.boss_killed.emit(boss_template.get("display_name", "Boss"), current_stage)
+
+    # 推进到下一阶段
+    current_stage += 1
+    if current_stage > 10:
+        current_stage = 10  # 暂时限制为第 10 阶段
+
+    enemies_in_stage.clear()
+    current_enemy_data = {}
+
+func _handle_player_death() -> void:
+    EventBus.player_died.emit()
+    # 搜打撤惩罚：掉落装备和素材
+    for item in inventory:
+        pass  # TODO: 掉落处理
+    inventory.clear()
+    # 复活
+    await get_tree().create_timer(2.0).timeout
+    current_health = max_health
+    EventBus.player_revived.emit()
 
 # ============================================================
 # 资源操作
@@ -160,20 +298,48 @@ func allocate_attribute(attr: String) -> bool:
     return true
 
 func _recalculate_stats() -> void:
-    # 基础生命 = 体力 × 4
+    # 基础属性计算
     max_health = 40.0 + vitality * 4.0
     current_health = mini(current_health, max_health)
-    # 基础法力 = 能量 × 2
     max_mana = 20.0 + energy * 2.0
     current_mana = mini(current_mana, max_mana)
-    # TODO: 装备加成
+
+    # 装备加成
+    for item in equipped_items.values():
+        if item.is_empty():
+            continue
+
+        # 基础防御
+        max_health += item.get("base_stats", {}).get("defense", 0) * 2
+
+        # 词缀加成
+        for affix in item.get("affixes", []):
+            match affix.get("stat", ""):
+                "increased_health":
+                    max_health += affix.get("value", 0)
+                "increased_vitality":
+                    vitality += int(affix.get("value", 0))
+                _:
+                    pass
+
+    current_health = mini(current_health, max_health)
 
 # ============================================================
 # DPS 计算
 # ============================================================
 func _update_stats() -> void:
-    # TODO: 基于属性、装备、技能计算实际 DPS 和 gold_per_second
-    pass
+    # 计算 DPS
+    self.dps = CombatResolver.calculate_player_damage()
+
+    # 计算金币生成速度
+    var base_gps = 1.0
+    var mf_bonus = 1.0
+    for item in equipped_items.values():
+        for affix in item.get("affixes", []):
+            if "gold" in affix.get("stat", "").to_lower():
+                mf_bonus += affix.get("value", 0) / 100.0
+
+    self.gold_per_second = base_gps * mf_bonus
 
 # ============================================================
 # 离线进度

@@ -124,17 +124,21 @@ static func calculate_damage_reduction(defense: float) -> float:
 # 经验与金币计算
 # ============================================================
 static func calculate_experience_reward(enemy_data: Dictionary) -> float:
-    var base_xp := enemy_data.get("xp_reward", 10.0)
+    var base_xp := 10.0 * enemy_data.get("xp_multiplier", 1.0)
+    var area_level := enemy_data.get("area_level", 1)
+    var level_bonus := pow(1.05, area_level - 1)
     var difficulty_mult := 1.0
     match GameManager.difficulty:
         "噩梦": difficulty_mult = 2.5
         "地狱": difficulty_mult = 5.0
-    return base_xp * difficulty_mult
+    return base_xp * level_bonus * difficulty_mult
 
 static func calculate_gold_reward(enemy_data: Dictionary) -> float:
-    var base_gold := enemy_data.get("gold_reward", 5.0)
+    var base_gold := 5.0 * enemy_data.get("gold_multiplier", 1.0)
+    var area_level := enemy_data.get("area_level", 1)
+    var level_bonus := pow(1.1, area_level - 1)
     var gold_find := _get_total_gold_find()
-    return base_gold * (1.0 + gold_find / 100.0)
+    return base_gold * level_bonus * (1.0 + gold_find / 100.0)
 
 static func _get_total_gold_find() -> float:
     var gf := 0.0
