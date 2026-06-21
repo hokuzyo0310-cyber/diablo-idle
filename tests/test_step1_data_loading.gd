@@ -9,7 +9,7 @@ func test_data_loading():
 	print("=== 开始测试 Step 1: 数据资源加载 ===\n")
 
 	# 测试角色预设
-	var barbarian = CharacterPresets.get_class("barbarian")
+	var barbarian = CharacterPresets.find_character_class("barbarian")
 	assert(barbarian.class_id == "barbarian", "野蛮人数据加载失败")
 	print("✓ 角色预设加载成功")
 	print("  - 职业: %s" % barbarian.class_name)
