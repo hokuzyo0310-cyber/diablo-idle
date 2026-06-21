@@ -145,7 +145,11 @@ func _ready() -> void:
     sell_btn.pressed.connect(_on_sell_pressed)
     btn_row.add_child(sell_btn)
 
-    # 刷新列表
+    # 刷新列表 + 监听新掉落
+    _refresh_item_list()
+    EventBus.item_dropped.connect(_on_item_dropped)
+
+func _on_item_dropped(_item: Dictionary) -> void:
     _refresh_item_list()
 
 
@@ -225,24 +229,24 @@ func _refresh_item_list() -> void:
 
 
 func _get_filtered_sorted_items() -> Array:
-    var items: Array = GameManager.inventory.duplicate()
+    var items: Array = []
+    items.assign(GameManager.inventory)  # 避免 .duplicate() 丢失类型
 
-    # 1. 稀有度筛选
+    # 1. 稀有度筛选 (lambda 参数不加类型 — untyped Array 传 Variant)
     if current_filter_rarity != "全部":
-        items = items.filter(func(d: Dictionary): return d.get("rarity", "普通") == current_filter_rarity)
+        items = items.filter(func(d): return d.get("rarity", "普通") == current_filter_rarity)
 
     # 2. 排序
     var rarity_order := {"普通": 0, "魔法": 1, "稀有": 2, "史诗": 3, "传奇": 4, "远古": 5}
     match current_sort_mode:
         "rarity":
-            items.sort_custom(func(a: Dictionary, b: Dictionary):
+            items.sort_custom(func(a, b):
                 return rarity_order.get(a.get("rarity", "普通"), 0) > rarity_order.get(b.get("rarity", "普通"), 0)
             )
         "slot":
-            items.sort_custom(func(a: Dictionary, b: Dictionary):
+            items.sort_custom(func(a, b):
                 return a.get("slot", "") < b.get("slot", "")
             )
-        # "new" 默认保持原始顺序（最近的在后面）
         _:
             pass
 
