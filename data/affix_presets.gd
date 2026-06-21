@@ -125,26 +125,28 @@ const SUFFIX_AFFIXES = [
 # ============================================================
 
 # 获取指定层级的稀有度数据 (返回副本，防止外部意外修改常量)
-static func find_rarity_tier(tier_id: int) -> Dictionary:
+func find_rarity_tier(tier_id: int) -> Dictionary:
     if tier_id >= 0 and tier_id < RARITY_TIERS.size():
         return RARITY_TIERS[tier_id].duplicate()
     return RARITY_TIERS[0].duplicate()  # 保底: 返回普通品质
 
 # 获取所有稀有度层级 (返回副本)
-static func get_all_rarity_tiers() -> Array[Dictionary]:
-    return RARITY_TIERS.duplicate()
+func get_all_rarity_tiers() -> Array[Dictionary]:
+    var result: Array[Dictionary] = []
+    result.assign(RARITY_TIERS)
+    return result
 
 # 随机获取一个前缀词缀 (等概率)
-static func get_random_prefix() -> Dictionary:
+func get_random_prefix() -> Dictionary:
     return PREFIX_AFFIXES[randi() % PREFIX_AFFIXES.size()].duplicate()
 
 # 随机获取一个后缀词缀 (等概率)
-static func get_random_suffix() -> Dictionary:
+func get_random_suffix() -> Dictionary:
     return SUFFIX_AFFIXES[randi() % SUFFIX_AFFIXES.size()].duplicate()
 
 # 随机生成指定数量的词缀 (按稀有度限制最大数量)
 # 主要用于测试或快速生成场景
-static func get_random_affixes(count: int, rarity: int = 1) -> Array[Dictionary]:
+func get_random_affixes(count: int, rarity: int = 1) -> Array[Dictionary]:
     var affixes: Array[Dictionary] = []
     var tier = find_rarity_tier(rarity)
     var actual_count = min(count, tier.max_affixes)

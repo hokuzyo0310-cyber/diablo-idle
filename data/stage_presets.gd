@@ -169,16 +169,18 @@ const STAGES = {
 
 # 查找阶段数据 (返回副本)
 # 找不到时返回 Stage 1 作为保底
-static func find_stage(stage_id: int) -> Dictionary:
+func find_stage(stage_id: int) -> Dictionary:
     if STAGES.has(stage_id):
         return STAGES[stage_id].duplicate()
     return STAGES[1].duplicate()  # 保底: 返回第一阶段
 
 # 获取所有阶段编号
-static func get_all_stages() -> Array[int]:
-    return STAGES.keys()
+func get_all_stages() -> Array[int]:
+    var result: Array[int] = []
+    result.assign(STAGES.keys())
+    return result
 
 # 判断指定阶段是否为 Boss 阶段
-static func is_boss_stage(stage_id: int) -> bool:
+func is_boss_stage(stage_id: int) -> bool:
     var stage = find_stage(stage_id)
     return stage.get("is_boss", false)

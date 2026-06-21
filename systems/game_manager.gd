@@ -211,11 +211,12 @@ func _handle_enemy_defeat() -> void:
     add_gold(gold)
     total_kills += 1
 
-    # 2. 生成掉落物品 (由 LootManager 负责稀有度骰子和词缀生成)
-    #    第二个参数是 Magic Find 加成 (0.0 = 无加成)
-    var item = LootManager.generate_item(current_stage, 0.0)
-    if not item.is_empty():
-        inventory.append(item)  # 物品自动收入背包 (半自动背包管理)
+    # 2. 生成掉落物品 — 每只敌人保底 1 件，额外再骰 1 件
+    #    基础掉落率 100%，双倍产出但不影响高稀有度权重
+    for _drop in range(2):
+        var item = LootManager.generate_item(current_stage, 0.0)
+        if not item.is_empty():
+            inventory.append(item)
 
     # 3. 广播击杀事件 (UI 会监听此事件更新显示)
     EventBus.enemy_killed.emit(current_enemy_data.get("display_name", "敌人"), current_stage)
@@ -389,13 +390,22 @@ func _level_up() -> void:
     unspent_points += 5
     EventBus.level_up.emit(level)
 
-# 经验公式: 100 × 1.15^(level-1)
-#   Lv1→2:  100 XP
-#   Lv10→11: ~376 XP
-#   Lv50→51: ~67,000 XP
-#   Lv99→100: ~680,000 XP
+# 经验公式 (分段):
+#   前 5 级加速: 极低门槛，1-2 分钟内可快速体验升级
+#   Lv5 之后: 标准指数增长 100 × 1.15^(level-1)
+#   Lv1→2:   30 XP
+#   Lv2→3:   60 XP
+#   Lv3→4:   87 XP
+#   Lv4→5:  148 XP
+#   Lv5→6:  251 XP (过渡)
+#   Lv6→7:  201 XP (标准公式接管)
 func _calculate_xp_for_level(lvl: int) -> float:
-    return 100.0 * pow(1.15, lvl - 1)
+    if lvl <= 2:
+        return 30.0 * float(lvl)           # 1→30, 2→60
+    elif lvl <= 5:
+        return 30.0 * pow(1.7, lvl - 1)    # 3→87, 4→148, 5→251
+    else:
+        return 100.0 * pow(1.15, lvl - 1)  # 标准曲线 6→201, 7→231...
 
 # ============================================================
 # 属性分配系统

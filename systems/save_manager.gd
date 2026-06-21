@@ -161,7 +161,10 @@ func _apply_save_data(data: Dictionary) -> void:
 
     # 装备
     GameManager.equipped_items = data.get("equipped_items", {})
-    GameManager.inventory = data.get("inventory", [])
+    var inv: Array = data.get("inventory", [])
+    GameManager.inventory.clear()
+    for inv_item in inv:
+        GameManager.inventory.append(inv_item)
 
     # 进度
     GameManager.current_stage = data.get("current_stage", 1)

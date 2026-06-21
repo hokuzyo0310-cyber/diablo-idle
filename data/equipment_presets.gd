@@ -131,14 +131,17 @@ const JEWELRY = {
 	},
 }
 
-static func get_all_base_items() -> Array[Dictionary]:
+func get_all_base_items() -> Array[Dictionary]:
 	var items: Array[Dictionary] = []
-	items.append_array(WEAPONS.values())
-	items.append_array(ARMOR.values())
-	items.append_array(JEWELRY.values())
+	for v in WEAPONS.values():
+		items.append(v)
+	for v in ARMOR.values():
+		items.append(v)
+	for v in JEWELRY.values():
+		items.append(v)
 	return items
 
-static func find_equipment(item_id: String) -> Dictionary:
+func find_equipment(item_id: String) -> Dictionary:
 	if WEAPONS.has(item_id):
 		return WEAPONS[item_id]
 	if ARMOR.has(item_id):

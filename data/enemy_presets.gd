@@ -101,7 +101,7 @@ const BOSSES = {
 # 查找敌人模板 (返回副本)
 # 会先在普通敌人中查找，再在 Boss 中查找
 # 找不到则返回默认的 skeleton 模板
-static func find_enemy_template(enemy_id: String) -> Dictionary:
+func find_enemy_template(enemy_id: String) -> Dictionary:
     if ENEMIES.has(enemy_id):
         return ENEMIES[enemy_id].duplicate()
     if BOSSES.has(enemy_id):
@@ -110,9 +110,13 @@ static func find_enemy_template(enemy_id: String) -> Dictionary:
     return ENEMIES["skeleton"].duplicate()
 
 # 获取所有普通敌人 ID 列表
-static func get_all_normal_enemies() -> Array[String]:
-    return ENEMIES.keys()
+func get_all_normal_enemies() -> Array[String]:
+    var result: Array[String] = []
+    result.assign(ENEMIES.keys())
+    return result
 
 # 获取所有 Boss ID 列表
-static func get_all_bosses() -> Array[String]:
-    return BOSSES.keys()
+func get_all_bosses() -> Array[String]:
+    var result: Array[String] = []
+    result.assign(BOSSES.keys())
+    return result

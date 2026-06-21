@@ -66,12 +66,12 @@ const NECROMANCER = {
 # ============================================================
 
 # 获取所有职业数据
-static func get_all_classes() -> Array[Dictionary]:
+func get_all_classes() -> Array[Dictionary]:
     return [BARBARIAN, SORCERESS, NECROMANCER]
 
 # 根据 class_id 查找职业数据
 # 找不到时默认返回野蛮人 (保底)
-static func find_character_class(class_id: String) -> Dictionary:
+func find_character_class(class_id: String) -> Dictionary:
     match class_id:
         "barbarian":
             return BARBARIAN

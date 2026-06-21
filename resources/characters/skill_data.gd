@@ -3,13 +3,13 @@ class_name SkillData
 extends Resource
 
 enum SkillType {
-    ACTIVE,      # 主动技能（有冷却）
-    PASSIVE,     # 被动技能（始终生效）
-    AURA         # 光环（影响自身和附近目标）
+	ACTIVE,      # 主动技能（有冷却）
+	PASSIVE,     # 被动技能（始终生效）
+	AURA         # 光环（影响自身和附近目标）
 }
 
 enum DamageElement {
-    PHYSICAL, FIRE, COLD, LIGHTNING, POISON, ARCANE, HOLY, SHADOW
+	PHYSICAL, FIRE, COLD, LIGHTNING, POISON, ARCANE, HOLY, SHADOW
 }
 
 @export var skill_id: String = ""                # 唯一标识
