@@ -336,11 +336,10 @@ func _advance_stage() -> void:
 func _handle_player_death() -> void:
     EventBus.player_died.emit()
 
-    # TODO: 搜打撤惩罚 — 丢弃本阶段获取的所有物品
-    # 当前简化实现: 直接清空背包 (Phase 1 MVP)
-    for item in inventory:
-        pass
-    inventory.clear()
+    # 死亡惩罚: 仅丢失最后 1/4 物品，不完全清空
+    var loss_count := maxi(1, inventory.size() / 4)
+    for _i in range(loss_count):
+        inventory.pop_back()
 
     # 2 秒复活等待时间 (暗黑经典死亡暂停)
     await get_tree().create_timer(2.0).timeout

@@ -90,6 +90,8 @@ func _ready() -> void:
 
     item_list = VBoxContainer.new()
     item_list.name = "ItemList"
+    item_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    item_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
     item_list.add_theme_constant_override("separation", 2)
     scroll.add_child(item_list)
 
@@ -214,6 +216,7 @@ func _refresh_item_list() -> void:
         child.queue_free()
 
     var items := _get_filtered_sorted_items()
+    print("[背包面板] 刷新列表 — 背包 %d 件，筛选后 %d 件" % [GameManager.inventory.size(), items.size()])
 
     if items.is_empty():
         var empty_label := Label.new()
@@ -281,6 +284,7 @@ func _make_item_button(item: Dictionary, index: int) -> Button:
     }
     btn.add_theme_color_override("font_color", rarity_colors.get(rarity, Color.WHITE))
     btn.add_theme_font_size_override("font_size", 13)
+    btn.custom_minimum_size = Vector2(0, 24)
 
     # 点击选中 → 显示详情
     btn.pressed.connect(func():
@@ -336,6 +340,7 @@ func _on_equip_pressed() -> void:
         return
     # 简化：直接装备选中物品
     var items := _get_filtered_sorted_items()
+    print("[背包面板] 刷新列表 — 背包 %d 件，筛选后 %d 件" % [GameManager.inventory.size(), items.size()])
     if selected_item_index >= items.size():
         return
 
@@ -362,6 +367,7 @@ func _on_compare_pressed() -> void:
     if selected_item_index < 0:
         return
     var items := _get_filtered_sorted_items()
+    print("[背包面板] 刷新列表 — 背包 %d 件，筛选后 %d 件" % [GameManager.inventory.size(), items.size()])
     if selected_item_index >= items.size():
         return
 
@@ -381,6 +387,7 @@ func _on_sell_pressed() -> void:
     if selected_item_index < 0:
         return
     var items := _get_filtered_sorted_items()
+    print("[背包面板] 刷新列表 — 背包 %d 件，筛选后 %d 件" % [GameManager.inventory.size(), items.size()])
     if selected_item_index >= items.size():
         return
 
