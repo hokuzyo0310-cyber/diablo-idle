@@ -2,13 +2,6 @@
 # 负责物品生成：稀有度骰子、词缀选择、数值骰子、物品命名
 extends Node
 
-# 导入数据预设
-var CharacterPresets = preload("res://data/character_presets.gd")
-var EquipmentPresets = preload("res://data/equipment_presets.gd")
-var EnemyPresets = preload("res://data/enemy_presets.gd")
-var AffixPresets = preload("res://data/affix_presets.gd")
-var StagePresets = preload("res://data/stage_presets.gd")
-
 # ============================================================
 # 数据引用（通过 @export 或在 _ready 中加载 .tres 资源）
 # ============================================================

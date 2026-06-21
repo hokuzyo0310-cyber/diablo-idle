@@ -2,11 +2,6 @@
 # 持有所有运行时游戏状态，通过 1Hz Timer 驱动自动战斗
 extends Node
 
-# 导入数据预设
-var EnemyPresets = preload("res://data/enemy_presets.gd")
-var StagePresets = preload("res://data/stage_presets.gd")
-var CharacterPresets = preload("res://data/character_presets.gd")
-
 # ============================================================
 # 配置常量
 # ============================================================

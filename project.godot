@@ -1,5 +1,5 @@
 ; Engine configuration file.
-; It's best edited using the editor UI and not manually,
+; It's best edited using the editor UI and not directly,
 ; since the parameters that go here are not all obvious.
 ;
 ; Format:
@@ -12,7 +12,6 @@ config_version=5
 
 config/name="DiabloIdle"
 config/features=PackedStringArray("4.7", "Forward Plus")
-config/icon=""
 
 [autoload]
 
@@ -20,19 +19,23 @@ EventBus="*res://systems/event_bus.gd"
 GameManager="*res://systems/game_manager.gd"
 SaveManager="*res://systems/save_manager.gd"
 LootManager="*res://systems/loot_manager.gd"
+CharacterPresets="*res://data/character_presets.gd"
+EquipmentPresets="*res://data/equipment_presets.gd"
+EnemyPresets="*res://data/enemy_presets.gd"
+AffixPresets="*res://data/affix_presets.gd"
+StagePresets="*res://data/stage_presets.gd"
+
+[debug]
+
+gdscript/warnings/untyped_declaration=1
 
 [display]
 
 window/size/viewport_width=1280
 window/size/viewport_height=720
 window/stretch/mode="viewport"
-window/stretch/aspect="keep"
 
 [rendering]
 
-renderer/rendering_method="gl_compatibility"
 textures/canvas_textures/default_texture_filter=0
-
-[debug]
-
-gdscript/warnings/untyped_declaration=1
+renderer/rendering_method="gl_compatibility"

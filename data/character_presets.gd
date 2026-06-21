@@ -1,5 +1,5 @@
 # 角色职业预设数据
-# 在 _ready() 时由 LootManager 加载
+extends RefCounted
 
 const BARBARIAN = {
 	"class_id": "barbarian",

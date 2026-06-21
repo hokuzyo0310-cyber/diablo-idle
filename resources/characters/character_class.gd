@@ -3,7 +3,7 @@ class_name CharacterClass
 extends Resource
 
 @export var class_id: String = ""                # 唯一标识 (barbarian, sorceress, necromancer)
-@export var class_name: String = ""              # 显示名称 (野蛮人, 法师, 死灵法师)
+@export var character_class: String = ""              # 显示名称 (野蛮人, 法师, 死灵法师)
 @export var class_description: String = ""       # 职业描述
 @export var base_strength: int = 20
 @export var base_dexterity: int = 20

@@ -1,4 +1,5 @@
 # 基础装备预设数据
+extends RefCounted
 
 const WEAPONS = {
 	"sword": {

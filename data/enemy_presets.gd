@@ -1,4 +1,5 @@
 # 敌人模板预设数据
+extends RefCounted
 
 const ENEMIES = {
 	"skeleton": {

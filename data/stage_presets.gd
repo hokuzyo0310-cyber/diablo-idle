@@ -1,4 +1,5 @@
 # 阶段预设数据（Act 1）
+extends RefCounted
 
 const STAGES = {
 	# Act 1: 沼泽

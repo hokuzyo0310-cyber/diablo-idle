@@ -1,4 +1,5 @@
 # 词缀预设数据（前缀和后缀）
+extends RefCounted
 
 const RARITY_TIERS = [
 	{
