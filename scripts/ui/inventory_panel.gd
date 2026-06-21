@@ -229,26 +229,30 @@ func _refresh_item_list() -> void:
 
 
 func _get_filtered_sorted_items() -> Array:
+    # 从 GameManager 的 Array[Dictionary] 逐个复制到无类型 Array
     var items: Array = []
-    items.assign(GameManager.inventory)  # 避免 .duplicate() 丢失类型
+    for inv_item in GameManager.inventory:
+        items.append(inv_item)
 
-    # 1. 稀有度筛选 (lambda 参数不加类型 — untyped Array 传 Variant)
+    # 1. 稀有度筛选 — 手动循环，避免 lambda 类型问题
     if current_filter_rarity != "全部":
-        items = items.filter(func(d): return d.get("rarity", "普通") == current_filter_rarity)
+        var filtered: Array = []
+        for d in items:
+            if d.get("rarity", "普通") == current_filter_rarity:
+                filtered.append(d)
+        items = filtered
 
-    # 2. 排序
-    var rarity_order := {"普通": 0, "魔法": 1, "稀有": 2, "史诗": 3, "传奇": 4, "远古": 5}
-    match current_sort_mode:
-        "rarity":
-            items.sort_custom(func(a, b):
-                return rarity_order.get(a.get("rarity", "普通"), 0) > rarity_order.get(b.get("rarity", "普通"), 0)
-            )
-        "slot":
-            items.sort_custom(func(a, b):
-                return a.get("slot", "") < b.get("slot", "")
-            )
-        _:
-            pass
+    # 2. 按稀有度排序 — 手动冒泡，避免 sort_custom lambda 类型问题
+    if current_sort_mode == "rarity":
+        var order := {"普通": 0, "魔法": 1, "稀有": 2, "史诗": 3, "传奇": 4, "远古": 5}
+        for i in range(items.size()):
+            for j in range(i + 1, items.size()):
+                var ri: int = order.get(items[i].get("rarity", "普通"), 0)
+                var rj: int = order.get(items[j].get("rarity", "普通"), 0)
+                if ri < rj:
+                    var tmp = items[i]
+                    items[i] = items[j]
+                    items[j] = tmp
 
     return items
 
