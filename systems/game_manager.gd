@@ -85,6 +85,7 @@ var current_stage: int = 1                       # 当前阶段编号 (1-10, Act
 var current_enemy_data: Dictionary = {}          # 当前正在战斗的敌人数据快照
 var enemies_in_stage: Array[Dictionary] = []     # 本阶段剩余敌人队列
 var enemy_index: int = 0                         # 当前敌人在 enemies_in_stage 中的索引
+var _is_dead: bool = false                      # 死亡守卫 — 防止 await 重入
 
 # ============================================================
 # 进度追踪 — 跨存档永久记录
@@ -217,6 +218,7 @@ func _handle_enemy_defeat() -> void:
         var item = LootManager.generate_item(current_stage, 0.0)
         if not item.is_empty():
             inventory.append(item)
+            EventBus.item_dropped.emit(item)
             print("[掉落] %s [%s] → 背包 (%d 件)" % [item.get("display_name", "?"), item.get("rarity", "?"), inventory.size()])
         else:
             print("[掉落] 生成失败 — 返回空物品")
@@ -334,6 +336,9 @@ func _advance_stage() -> void:
 # 保留: 经验和金币不变 (已经在 _handle_enemy_defeat 中发放)
 # 复活: 等待 2 秒后自动满血复活
 func _handle_player_death() -> void:
+    if _is_dead:
+        return
+    _is_dead = true
     EventBus.player_died.emit()
 
     # 死亡惩罚: 仅丢失最后 1/4 物品，不完全清空
@@ -344,6 +349,7 @@ func _handle_player_death() -> void:
     # 2 秒复活等待时间 (暗黑经典死亡暂停)
     await get_tree().create_timer(2.0).timeout
     current_health = max_health
+    _is_dead = false
     EventBus.player_revived.emit()
 
 # ============================================================

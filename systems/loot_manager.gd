@@ -94,8 +94,6 @@ func generate_item(area_level: int, magic_find: float = 0.0) -> Dictionary:
 	# Step 6: 生成显示名称 — "残忍的 剑 of 坚韧的"
 	item["display_name"] = _build_display_name(base, selected_affixes)
 
-	# 广播掉落事件 (UI 监听 → 战斗日志显示)
-	EventBus.item_dropped.emit(item)
 	return item
 
 # ============================================================
