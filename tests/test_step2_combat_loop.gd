@@ -18,7 +18,7 @@ func test_combat_loop():
 	GameManager.difficulty = "普通"
 
 	# 初始化角色属性
-	var barbarian_data = CharacterPresets.get_class("barbarian")
+	var barbarian_data = CharacterPresets.find_character_class("barbarian")
 	GameManager.strength = barbarian_data.base_strength
 	GameManager.dexterity = barbarian_data.base_dexterity
 	GameManager.vitality = barbarian_data.base_vitality

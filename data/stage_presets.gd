@@ -127,7 +127,7 @@ const STAGES = {
 	},
 }
 
-static func get_stage(stage_id: int) -> Dictionary:
+static func find_stage(stage_id: int) -> Dictionary:
 	if STAGES.has(stage_id):
 		return STAGES[stage_id].duplicate()
 	return STAGES[1].duplicate()
@@ -136,5 +136,5 @@ static func get_all_stages() -> Array[int]:
 	return STAGES.keys()
 
 static func is_boss_stage(stage_id: int) -> bool:
-	var stage = get_stage(stage_id)
+	var stage = find_stage(stage_id)
 	return stage.get("is_boss", false)

@@ -19,13 +19,13 @@ func test_data_loading():
 	])
 
 	# 测试装备预设
-	var sword = EquipmentPresets.get_base_item("sword")
+	var sword = EquipmentPresets.find_equipment("sword")
 	assert(sword.item_id == "sword", "装备数据加载失败")
 	print("\n✓ 装备预设加载成功")
 	print("  - 剑: 伤害 %d-%d" % [sword.base_min_damage, sword.base_max_damage])
 
 	# 测试敌人预设
-	var skeleton = EnemyPresets.get_enemy_template("skeleton")
+	var skeleton = EnemyPresets.find_enemy_template("skeleton")
 	assert(skeleton.enemy_id == "skeleton", "敌人数据加载失败")
 	print("\n✓ 敌人预设加载成功")
 	print("  - 骷髅战士: HP %d, 伤害 %d, 防御 %d" % [
@@ -43,7 +43,7 @@ func test_data_loading():
 		])
 
 	# 测试阶段预设
-	var stage1 = StagePresets.get_stage(1)
+	var stage1 = StagePresets.find_stage(1)
 	assert(stage1.stage_id == 1, "阶段数据加载失败")
 	print("\n✓ 阶段预设加载成功")
 	print("  - 第 1 阶段: %s (区域等级 %d)" % [stage1.stage_name, stage1.area_level])

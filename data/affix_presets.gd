@@ -82,7 +82,7 @@ const SUFFIX_AFFIXES = [
 	{"name": "幸运的", "stat": "increased_magic_find", "min_value": 10, "max_value": 30, "weight": 50.0},
 ]
 
-static func get_rarity_tier(tier_id: int) -> Dictionary:
+static func find_rarity_tier(tier_id: int) -> Dictionary:
 	if tier_id >= 0 and tier_id < RARITY_TIERS.size():
 		return RARITY_TIERS[tier_id].duplicate()
 	return RARITY_TIERS[0].duplicate()

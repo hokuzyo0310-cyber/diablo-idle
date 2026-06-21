@@ -138,7 +138,7 @@ static func get_all_base_items() -> Array[Dictionary]:
 	items.append_array(JEWELRY.values())
 	return items
 
-static func get_base_item(item_id: String) -> Dictionary:
+static func find_equipment(item_id: String) -> Dictionary:
 	if WEAPONS.has(item_id):
 		return WEAPONS[item_id]
 	if ARMOR.has(item_id):

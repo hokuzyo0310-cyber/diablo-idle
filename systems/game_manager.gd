@@ -157,7 +157,7 @@ func _handle_enemy_defeat() -> void:
         _initialize_current_enemy()
 
 func _initialize_current_stage() -> void:
-    var stage_data = StagePresets.get_stage(current_stage)
+    var stage_data = StagePresets.find_stage(current_stage)
     if stage_data.is_empty():
         return
 
@@ -168,7 +168,7 @@ func _initialize_current_stage() -> void:
     var enemy_count = randi_range(stage_data.enemy_count_min, stage_data.enemy_count_max)
     for i in range(enemy_count):
         var enemy_template_id = stage_data.enemy_templates[randi() % stage_data.enemy_templates.size()]
-        var enemy_template = EnemyPresets.get_enemy_template(enemy_template_id)
+        var enemy_template = EnemyPresets.find_enemy_template(enemy_template_id)
         var enemy = _create_enemy_from_template(enemy_template, stage_data.area_level)
         enemies_in_stage.append(enemy)
 
@@ -213,7 +213,7 @@ func _advance_stage() -> void:
     EventBus.stage_cleared.emit(current_stage)
 
     # 检查是否是 Boss 阶段
-    var stage_data = StagePresets.get_stage(current_stage)
+    var stage_data = StagePresets.find_stage(current_stage)
     if stage_data.get("is_boss", false):
         var boss_template = EnemyPresets.get_enemy_template(stage_data.boss_template)
         EventBus.boss_killed.emit(boss_template.get("display_name", "Boss"), current_stage)

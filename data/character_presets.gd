@@ -40,7 +40,7 @@ const NECROMANCER = {
 static func get_all_classes() -> Array[Dictionary]:
 	return [BARBARIAN, SORCERESS, NECROMANCER]
 
-static func get_class(class_id: String) -> Dictionary:
+static func find_character_class(class_id: String) -> Dictionary:
 	match class_id:
 		"barbarian": return BARBARIAN
 		"sorceress": return SORCERESS

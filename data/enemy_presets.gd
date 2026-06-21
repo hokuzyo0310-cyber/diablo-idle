@@ -67,7 +67,7 @@ const BOSSES = {
 	},
 }
 
-static func get_enemy_template(enemy_id: String) -> Dictionary:
+static func find_enemy_template(enemy_id: String) -> Dictionary:
 	if ENEMIES.has(enemy_id):
 		return ENEMIES[enemy_id].duplicate()
 	if BOSSES.has(enemy_id):
