@@ -70,6 +70,7 @@ func generate_item(area_level: int, magic_find: float = 0.0) -> Dictionary:
 	# Step 1: 选择基础物品类型 (随机从所有模板中选一个)
 	var base: Dictionary = _pick_base_item(area_level)
 	if base.is_empty():
+		push_warning("[LootManager] _pick_base_item 返回空 — base_items=%d" % base_items.size())
 		return {}
 
 	# Step 2: 骰稀有度 — 加权随机决定物品品质

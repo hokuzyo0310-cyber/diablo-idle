@@ -165,9 +165,10 @@ func _process_combat_tick() -> void:
         return
 
     # 步骤 2: 玩家造成伤害
-    # DPS 计算由 CombatResolver.calculate_player_damage() 负责
-    # 公式: ((武器伤害 * (1+力量加成)) + 元素伤害) * 暴击倍率 * 攻速
     var player_damage = CombatResolver.calculate_player_damage()
+    # 每 10 次 tick 输出一次战斗日志 (减少刷屏)
+    if Engine.get_process_frames() % 10 == 0:
+        print("[战斗] DPS=%.1f | 敌人=%s | HP=%.0f/%.0f" % [player_damage, current_enemy_data.get("display_name", "?"), current_enemy_data.get("current_health", 0), current_enemy_data.get("max_health", 100)])
 
     # 确保当前敌人数据有效
     if current_enemy_data.is_empty():
@@ -212,11 +213,13 @@ func _handle_enemy_defeat() -> void:
     total_kills += 1
 
     # 2. 生成掉落物品 — 每只敌人保底 1 件，额外再骰 1 件
-    #    基础掉落率 100%，双倍产出但不影响高稀有度权重
     for _drop in range(2):
         var item = LootManager.generate_item(current_stage, 0.0)
         if not item.is_empty():
             inventory.append(item)
+            print("[掉落] %s [%s] → 背包 (%d 件)" % [item.get("display_name", "?"), item.get("rarity", "?"), inventory.size()])
+        else:
+            print("[掉落] 生成失败 — 返回空物品")
 
     # 3. 广播击杀事件 (UI 会监听此事件更新显示)
     EventBus.enemy_killed.emit(current_enemy_data.get("display_name", "敌人"), current_stage)
