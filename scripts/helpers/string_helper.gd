@@ -62,9 +62,9 @@ static func damage_number_text(amount: float, element: String = "physical") -> S
 # ============================================================
 static func affix_description(affix: Dictionary) -> String:
     """生成单条词缀的描述文本"""
-    var name := affix.get("quality_name", "")
-    var stat := affix.get("stat", "")
-    var value := affix.get("value", 0.0)
+    var name: String = affix.get("quality_name", "")
+    var stat: String = affix.get("stat", "")
+    var value: float = affix.get("value", 0.0)
     var sign := "+" if value >= 0 else ""
 
     # 判断是百分比还是固定值
@@ -81,8 +81,8 @@ static func item_tooltip(item: Dictionary) -> String:
     var lines: Array[String] = []
 
     # 名称（带稀有度颜色）
-    var name := item.get("display_name", item.get("base_name", "未知物品"))
-    var rarity_color := item.get("rarity_color", "#ffffff")
+    var name: String = item.get("display_name", item.get("base_name", "未知物品"))
+    var rarity_color: String = item.get("rarity_color", "#ffffff")
     lines.append("[center]%s[/center]" % rarity_color_text(name, rarity_color))
 
     # 稀有度标签

@@ -72,17 +72,19 @@ static func calculate_player_damage() -> float:
 
 # 武器最小伤害 — 空手时默认 2.0
 static func _get_weapon_min_damage() -> float:
-    var weapon := GameManager.equipped_items.get("weapon_main", {})
+    var weapon: Dictionary = GameManager.equipped_items.get("weapon_main", {})
     if weapon.is_empty():
         return 2.0
-    return weapon.get("base_stats", {}).get("min_damage", 2.0)
+    var base_stats: Dictionary = weapon.get("base_stats", {})
+    return base_stats.get("min_damage", 2.0)
 
 # 武器最大伤害 — 空手时默认 5.0 (波动范围 2~5)
 static func _get_weapon_max_damage() -> float:
-    var weapon := GameManager.equipped_items.get("weapon_main", {})
+    var weapon: Dictionary = GameManager.equipped_items.get("weapon_main", {})
     if weapon.is_empty():
         return 5.0
-    return weapon.get("base_stats", {}).get("max_damage", 5.0)
+    var base_stats: Dictionary = weapon.get("base_stats", {})
+    return base_stats.get("max_damage", 5.0)
 
 # 每点力量增加 1% 物理伤害 (0.01 = 1%)
 static func _get_str_damage_per_point() -> float:
@@ -143,7 +145,7 @@ static func _get_attacks_per_second() -> float:
 #   普通 ×1.0, 噩梦 ×2.0, 地狱 ×4.0
 # 随机波动: 80%~120% (每次攻击伤害有变化)
 static func calculate_enemy_damage(enemy_data: Dictionary) -> float:
-    var base_damage := enemy_data.get("damage", 5.0)
+    var base_damage: float = enemy_data.get("damage", 5.0)
 
     # 难度倍率 — 噩梦敌人伤害翻倍，地狱再翻倍
     var difficulty_multiplier := 1.0
@@ -187,8 +189,8 @@ static func calculate_damage_reduction(defense: float) -> float:
 #   举例: Lv1 骷髅战士 (xp=1.0) → 10 × 1.0 × 1.0 × 1.0 = 10 XP
 #         Lv10 Boss (xp=5.0, hell) → 10 × 5.0 × 1.05^9 × 5.0 ≈ 387 XP
 static func calculate_experience_reward(enemy_data: Dictionary) -> float:
-    var base_xp := 10.0 * enemy_data.get("xp_multiplier", 1.0)
-    var area_level := enemy_data.get("area_level", 1)
+    var base_xp: float = 10.0 * enemy_data.get("xp_multiplier", 1.0)
+    var area_level: int = enemy_data.get("area_level", 1)
     # 区域等级经验加成 — 每级 +5%
     var level_bonus := pow(1.05, area_level - 1)
     # 难度经验倍率 — 难点 = 更多经验
@@ -204,8 +206,8 @@ static func calculate_experience_reward(enemy_data: Dictionary) -> float:
 #   5 × gold_multiplier × 1.10^(area_level-1) × (1 + GF/100)
 #   GF (Gold Find) 来自装备词缀，每 100 GF = 金币翻倍
 static func calculate_gold_reward(enemy_data: Dictionary) -> float:
-    var base_gold := 5.0 * enemy_data.get("gold_multiplier", 1.0)
-    var area_level := enemy_data.get("area_level", 1)
+    var base_gold: float = 5.0 * enemy_data.get("gold_multiplier", 1.0)
+    var area_level: int = enemy_data.get("area_level", 1)
     # 区域等级金币加成 — 每级 +10%
     var level_bonus := pow(1.1, area_level - 1)
     # 装备上的 GF (Gold Find) 加成

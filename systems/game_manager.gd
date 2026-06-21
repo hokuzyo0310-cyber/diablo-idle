@@ -276,11 +276,10 @@ func _create_enemy_from_template(template: Dictionary, area_level: int) -> Dicti
     var scaling = pow(1.12, area_level - 1)
 
     # 难度倍率 — 修改 difficulty 字符串切换难度
-    var difficulty_mult = match(difficulty):
-        "普通": 1.0
-        "噩梦": 2.0
-        "地狱": 4.0
-        _: 1.0
+    var difficulty_mult: float = 1.0
+    match difficulty:
+        "噩梦": difficulty_mult = 2.0
+        "地狱": difficulty_mult = 4.0
 
     # 返回运行时敌人数据快照 (Dictionary 而非 Object — 性能优先)
     return {
@@ -496,7 +495,7 @@ func apply_offline_ticks(offline_seconds: float) -> void:
     # 应用 50% 离线效率
     var effective_ticks := int(capped * OFFLINE_EFFICIENCY)
     # 最多逐秒模拟 3600 tick (≈1小时在线)
-    var simulated := min(effective_ticks, 3600)
+    var simulated: int = min(effective_ticks, 3600)
 
     var gold_earned := 0.0
     var xp_earned := 0.0

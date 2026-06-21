@@ -214,8 +214,8 @@ func _apply_class_to_game_manager(class_id: String) -> void:
     GameManager.souls = 0.0
 
     # 初始装备
-    var weapon_id := class_data.get("starting_weapon_id", "sword")
-    var armor_id := class_data.get("starting_armor_id", "helm")
+    var weapon_id: String = class_data.get("starting_weapon_id", "sword")
+    var armor_id: String = class_data.get("starting_armor_id", "helm")
     _give_starter_gear(weapon_id, armor_id)
 
     # 计算属性
@@ -244,7 +244,7 @@ func _fallback_start_game() -> void:
             child.queue_free()
 
     # 创建主游戏 UI
-    var main_ui := load("res://scripts/ui/main_game_ui.gd").new()
+    var main_ui: Control = load("res://scripts/ui/main_game_ui.gd").new()
     main_ui.name = "MainGameUI"
     root.add_child(main_ui)
 

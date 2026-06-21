@@ -77,7 +77,7 @@ func generate_item(area_level: int, magic_find: float = 0.0) -> Dictionary:
 
     # Step 3: 确定词缀数量 — 稀有度决定最少/最多词缀数
     #   例: 魔法 1-2词缀, 稀有 3-4词缀, 传奇 6词缀
-    var num_affixes := randi_range(rarity.get("min_affixes", 0), rarity.get("max_affixes", 0))
+    var num_affixes: int = randi_range(rarity.get("min_affixes", 0), rarity.get("max_affixes", 0))
     # 前缀和后缀各约一半 (奇数时前缀多1)
     var num_prefixes := ceili(num_affixes / 2.0)
     var num_suffixes := num_affixes - num_prefixes
@@ -177,8 +177,8 @@ func _get_available_affixes(affix_type: String, base: Dictionary) -> Array[Dicti
 func _roll_single_affix(affix: Dictionary, area_level: int, rarity: Dictionary) -> Dictionary:
     # 区域等级缩放: 每级 +10%
     var scaling := 1.0 + area_level * 0.1
-    var min_val := affix.get("min_value", 1.0) * scaling
-    var max_val := affix.get("max_value", 10.0) * scaling
+    var min_val: float = affix.get("min_value", 1.0) * scaling
+    var max_val: float = affix.get("max_value", 10.0) * scaling
 
     var value: float
     # 远古物品 → 词缀值取最大值 (保证完美骰值)
@@ -189,7 +189,7 @@ func _roll_single_affix(affix: Dictionary, area_level: int, rarity: Dictionary) 
         value = randf_range(min_val, max_val)
 
     # 计算品质百分比 (用于后续品质命名)
-    var pct := (value - min_val) / (max_val - min_val) * 100.0 if max_val > min_val else 100.0
+    var pct: float = (value - min_val) / (max_val - min_val) * 100.0 if max_val > min_val else 100.0
 
     return {
         "name": affix.get("name", "未知"),       # 词缀名 (如 "炎热的")

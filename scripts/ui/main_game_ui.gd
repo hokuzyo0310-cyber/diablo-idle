@@ -459,8 +459,8 @@ func _update_monster_display() -> void:
     var enemy := GameManager.current_enemy_data
     monster_name_label.text = enemy.get("display_name", "未知敌人")
 
-    var cur := enemy.get("current_health", 0.0)
-    var max_hp := enemy.get("max_health", 100.0)
+    var cur: float = enemy.get("current_health", 0.0)
+    var max_hp: float = enemy.get("max_health", 100.0)
     monster_hp_bar.max_value = max_hp
     monster_hp_bar.value = cur
 
@@ -546,8 +546,8 @@ func _on_player_revived() -> void:
 
 # --- 掉落 ---
 func _on_item_dropped(item_data: Dictionary) -> void:
-    var name := item_data.get("display_name", item_data.get("base_name", "物品"))
-    var rarity := item_data.get("rarity", "普通")
+    var name: String = item_data.get("display_name", item_data.get("base_name", "物品"))
+    var rarity: String = item_data.get("rarity", "普通")
     combat_log_label.text = "获得物品: %s [%s]" % [name, rarity]
 
 # --- 存档 ---
@@ -620,12 +620,12 @@ func _close_current_panel() -> void:
 
 # 背包面板工厂 — 委托给 InventoryPanel 脚本
 func _create_inventory_panel() -> Control:
-    var panel := load("res://scripts/ui/inventory_panel.gd").new()
+    var panel: Control = load("res://scripts/ui/inventory_panel.gd").new()
     return panel
 
 # 属性面板工厂 — 委托给 StatsPanel 脚本
 func _create_stats_panel() -> Control:
-    var panel := load("res://scripts/ui/stats_panel.gd").new()
+    var panel: Control = load("res://scripts/ui/stats_panel.gd").new()
     return panel
 
 

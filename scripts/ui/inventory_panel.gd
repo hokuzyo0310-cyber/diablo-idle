@@ -257,12 +257,12 @@ func _make_item_button(item: Dictionary, index: int) -> Button:
     btn.name = "Item_%d" % index
 
     # 按钮文本 = 物品名称
-    var name := item.get("display_name", item.get("base_name", "物品"))
+    var name: String = item.get("display_name", item.get("base_name", "物品"))
     btn.text = "%s  [Lv.%d %s]" % [name, item.get("item_level", 1), item.get("slot", "?")]
     btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 
     # 按稀有度着色
-    var rarity := item.get("rarity", "普通")
+    var rarity: String = item.get("rarity", "普通")
     var rarity_colors := {
         "普通": Color.WHITE,
         "魔法": Color("#4169e1"),
@@ -291,8 +291,8 @@ func _show_item_detail(item: Dictionary) -> void:
     var text := ""
 
     # 名称（稀有度颜色）
-    var name := item.get("display_name", item.get("base_name", "未知"))
-    var rarity := item.get("rarity", "普通")
+    var name: String = item.get("display_name", item.get("base_name", "未知"))
+    var rarity: String = item.get("rarity", "普通")
     text += "[%s] %s [/]\n" % [rarity, name]
     text += "物品等级: %d\n\n" % item.get("item_level", 1)
 
@@ -305,9 +305,9 @@ func _show_item_detail(item: Dictionary) -> void:
 
     # 词缀
     for affix in item.get("affixes", []):
-        var affix_name := affix.get("name", "?")
-        var stat_name := affix.get("stat", "?")
-        var val := affix.get("value", 0.0)
+        var affix_name: String = affix.get("name", "?")
+        var stat_name: String = affix.get("stat", "?")
+        var val: float = affix.get("value", 0.0)
         text += "%s: +%.1f %s\n" % [affix_name, val, stat_name]
 
     # 独特能力
@@ -332,7 +332,7 @@ func _on_equip_pressed() -> void:
         return
 
     var item: Dictionary = items[selected_item_index]
-    var slot := item.get("slot", "")
+    var slot: String = item.get("slot", "")
 
     # 检查该槽位是否已有装备
     if GameManager.equipped_items.has(slot) and not GameManager.equipped_items[slot].is_empty():
@@ -358,7 +358,7 @@ func _on_compare_pressed() -> void:
         return
 
     var item: Dictionary = items[selected_item_index]
-    var slot := item.get("slot", "")
+    var slot: String = item.get("slot", "")
 
     var text := "=== 对比 ===\n\n[新物品]\n"
     text += _format_item_short(item)
@@ -377,7 +377,7 @@ func _on_sell_pressed() -> void:
         return
 
     var item: Dictionary = items[selected_item_index]
-    var price := item.get("sell_price", 10)
+    var price: int = item.get("sell_price", 10)
     GameManager.add_gold(price)
     GameManager.inventory.erase(item)
     EventBus.item_sold.emit(item, price)

@@ -208,7 +208,7 @@ func _build_equipment_display() -> Control:
         slot_rect.position = pos - Vector2(18, 18)
 
         # 已装备物品提示
-        var item := GameManager.equipped_items.get(slot_name, {})
+        var item: Dictionary = GameManager.equipped_items.get(slot_name, {})
         if not item.is_empty():
             slot_rect.color = Color("#3a2a28")
             # 物品名称小标签
@@ -289,11 +289,11 @@ func _update_equipment_display() -> void:
         for slot_rect in child.get_children():
             if slot_rect is Label and slot_rect.name.begins_with("EqName_"):
                 var slot_name := slot_rect.name.replace("EqName_", "")
-                var item := GameManager.equipped_items.get(slot_name, {})
+                var item: Dictionary = GameManager.equipped_items.get(slot_name, {})
                 if not item.is_empty():
                     slot_rect.text = item.get("base_name", "?")
                     # 按稀有度着色
-                    var rarity := item.get("rarity", "普通")
+                    var rarity: String = item.get("rarity", "普通")
                     var colors := {
                         "普通": Color.WHITE,
                         "魔法": Color("#4169e1"),

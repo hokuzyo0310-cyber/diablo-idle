@@ -12,6 +12,10 @@ extends Node
 # 启动流程
 # ============================================================
 func _ready() -> void:
+    # 延迟到下一帧执行启动流程 — 避免在场景树构建期间切换场景
+    call_deferred("_start_flow")
+
+func _start_flow() -> void:
     print("=".repeat(40))
     print("  暗黑破坏神 — 挂机刷宝 v0.1.0")
     print("  Diablo Idle - MVP Phase 1")
@@ -65,7 +69,7 @@ func _create_main_game_dynamic() -> void:
     _clear_root()
 
     # 创建主游戏 UI
-    var main_ui := load("res://scripts/ui/main_game_ui.gd").new()
+    var main_ui: Control = load("res://scripts/ui/main_game_ui.gd").new()
     main_ui.name = "MainGameUI"
     get_tree().root.add_child(main_ui)
 
@@ -79,7 +83,7 @@ func _create_main_game_dynamic() -> void:
 func _create_character_select_dynamic() -> void:
     _clear_root()
 
-    var select_ui := load("res://scripts/ui/character_select.gd").new()
+    var select_ui: Control = load("res://scripts/ui/character_select.gd").new()
     select_ui.name = "CharacterSelect"
     get_tree().root.add_child(select_ui)
 
@@ -92,4 +96,4 @@ func _clear_root() -> void:
                            "CharacterPresets", "EquipmentPresets", "EnemyPresets",
                            "AffixPresets", "StagePresets"]:
             continue  # 保留 Autoload 节点
-        child.queue_free()
+        child.queue_free.call_deferred()
